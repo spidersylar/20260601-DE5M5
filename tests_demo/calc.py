@@ -18,7 +18,7 @@ class Calculator:
     #stretch look into matrix dot product vs cross product
     
 if __name__ == "__main__":
-    myCalc = Calculator(10,20)
-    print(myCalc.get_sum())
+    myCalc = Calculator(144,12)
+    print(myCalc.quotient())
 
     print(myCalc)
