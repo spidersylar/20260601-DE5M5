@@ -3,19 +3,28 @@ from calc import Calculator
 
 class TestOperations(unittest.TestCase):
     def setUp(self):
-        data = [(8,2),(10,0)]
-        self.calc = Calculator(8,2)
+        self.data = [(8,2,10,6,16,4),
+                (10,5,15,5,50,2),
+                (10,0,10,10,0,10)]
     def test_sum(self):
-        self.assertEqual(self.calc.get_sum(), 10, "The answer was not 10")
+        for a,b, expected, _, _, _ in self.data:
+            calc = Calculator(a, b)
+            self.assertEqual(calc.get_sum(), expected, f"Failed sum for {a} and {b}")
 
     def test_difference(self):
-        self.assertEqual(self.calc.difference(), 6, "The answer was not 6")
+        for a,b, _, expected, _, _ in self.data:
+            calc = Calculator(a, b)
+            self.assertEqual(calc.difference(), expected, f"Failed difference for {a} and {b}")
 
     def test_product(self):
-        self.assertEqual(self.calc.product(), 16, "The answer was not 16")
+        for a,b, _, _, expected, _ in self.data:
+            calc = Calculator(a, b)
+            self.assertEqual(calc.product(), expected, f"Failed product for {a} and {b}")
 
     def test_quotient(self):
-        self.assertEqual(self.calc.quotient(), 4, "The answer was not 4")
+        for a,b, _, _, _, expected in self.data:
+            calc = Calculator(a, b)
+            self.assertEqual(calc.quotient(), expected, f"Failed quotient for {a} and {b}")
 
     def tearDown(self):
         return super().tearDown()

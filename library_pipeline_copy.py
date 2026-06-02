@@ -61,6 +61,7 @@ def metrics(name,initial_count,final_count):
     # counts rows dropped
     dropped = initial_count - final_count
     print(f"Rows Dropped from {name}: {dropped}")
+    return dropped
 
 """ def load_to_csv(cust,checko):
     checko.to_csv('Data/Clean_CheckOuts.csv')
