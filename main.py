@@ -10,6 +10,10 @@ def load_data(data_dir="Data"):
     customers = p.read_csv(os.path.join(data_dir, '03_Library SystemCustomers.csv'))
     return checkouts,customers 
 
+def calculate_days_between(start_date,end_date):
+    numdays = (end_date - start_date).dt.days
+    return numdays
+
 def clean_customers(df):
     #takes the customers data and cleans it
     df_clean = df.dropna().copy()
@@ -41,7 +45,8 @@ def clean_checkouts(df):
     # calculate loan duration
     weeks = df_clean['Days allowed to borrow'].str.extract(r'(\d+)').astype(float).fillna(2)
     df_clean['Days Allowed'] = (weeks * 7).astype(int)
-    df_clean['Actual Days Checked Out'] = (df_clean['Book Returned_dt'] - df_clean['Book checkout_dt']).dt.days
+    df_clean['Actual Days Checked Out']  = calculate_days_between(df_clean['Book checkout_dt'],df_clean['Book Returned_dt'])
+    #df_clean['Actual Days Checked Out'] = (df_clean['Book Returned_dt'] - df_clean['Book checkout_dt']).dt.days
     df_clean['Exceeded Allowed Days'] = df_clean['Actual Days Checked Out'] > df_clean['Days Allowed']
     
     # Drop duplicates and cleanup types
@@ -84,7 +89,7 @@ if __name__ == "__main__":
     metrics('Customers',len(raw_customers), len(clean_cust_df))
 
 
-    #Load to SSMS (WIP)
+    #Load to SSMS
     #load_to_csv(clean_cust_df,clean_check_df)
 
     load_to_ssms(clean_cust_df, table_name="Customers", server_name=".", database_name="Library_Project")
