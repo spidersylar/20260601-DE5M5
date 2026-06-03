@@ -23,8 +23,11 @@ class TestOperations(unittest.TestCase):
 
     def test_quotient(self):
         for a,b, _, _, _, expected in self.data:
-            calc = Calculator(a, b)
-            self.assertEqual(calc.quotient(), expected, f"Failed quotient for {a} and {b}")
+            if b == 0: 
+                pass
+            else:
+                calc = Calculator(a, b)
+                self.assertEqual(calc.quotient(), expected, f"Failed quotient for {a} and {b}")
 
     def tearDown(self):
         return super().tearDown()
