@@ -14,6 +14,8 @@ class Calculator:
         return self.num1 * self.num2
     #quotiant 
     def quotient(self):
+        if self.num2 == 0:
+            return 0
         return self.num1 / self.num2
     #stretch look into matrix dot product vs cross product
     
