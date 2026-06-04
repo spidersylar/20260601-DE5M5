@@ -2,6 +2,7 @@ import os
 import datetime 
 import pandas as p
 from sqlalchemy import create_engine
+import time 
 
 # Extract 
 def load_data(data_dir="Data"):
@@ -75,8 +76,33 @@ def load_to_ssms(df,table_name,server_name=".",database_name="Library_Project"):
     #overwrite table if exists or creates if new
     df.to_sql(table_name,con=engine, if_exists='replace',index=False)
 
+
+def log_pipeline_metrics(start_time,end_time,raw_check,clean_check,raw_cust,clean_cust,engine):
+    execution_time_seconds = round(end_time - start_time)
+
+    log_data = {
+        "Run_Timestamp": [datetime.datetime.now()],
+        "Execution_Time_Sec": [execution_time_seconds],
+        "Raw_Checkouts_Count": [raw_check],
+        "Clean_Checkouts_Count": [clean_check],
+        "Dropped_Checkouts": [raw_check - clean_check],
+        "Raw_Customers_Count": [raw_cust],
+        "Clean_Customers_Count": [clean_cust],
+        "Dropped_Customers": [raw_cust - clean_cust]
+    }
+
+    log_df = p.DataFrame(log_data)
+    log_df.to_sql("Pipeline_Logs", con=engine, if_exists="append", index=False)
+    print("saved pipeline audit logs to SSMS")
+
 def run_all():
     print("Starting Pipeline")
+    start_time = time.time() #starting run time clock 
+
+    #connection for logs
+    connection_string = f"mssql+pyodbc://./Library_Project?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
+    engine = create_engine(connection_string)
+
     #Extract Data
     raw_checkouts, raw_customers = load_data()
 
@@ -84,15 +110,19 @@ def run_all():
     clean_cust_df = clean_customers(raw_customers)
     clean_check_df = clean_checkouts(raw_checkouts)
 
-    #Metrics
-    metrics('Checkouts',len(raw_checkouts), len(clean_check_df))
-    metrics('Customers',len(raw_customers), len(clean_cust_df))
-
-
-    #Load to SSMS
-    #load_to_csv(clean_cust_df,clean_check_df)
-
+    #Load core tables to SSMS
     load_to_ssms(clean_cust_df, table_name="Customers", server_name=".", database_name="Library_Project")
     load_to_ssms(clean_check_df, table_name="Checkouts", server_name=".", database_name="Library_Project")
+    
+    end_time = time.time() #stop runtime clock
+
+    #Save metrics to SSMS 
+    log_pipeline_metrics(
+        start_time, end_time,
+        len(raw_checkouts), len(clean_check_df),
+        len(raw_customers), len(clean_cust_df),
+        engine
+    )
+    
     print("Pipeline run complete")
     return {"status": "success", "message": "script ran successfully"}
