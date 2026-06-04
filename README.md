@@ -5,7 +5,7 @@ for data engineering apprenticeship module 5
 Scenario:
 A library wants to replace its slow, manual spreadsheet reviews with an automated data pipeline. A brief inspection of the library's raw data shows severe data quality issues that make manual reporting unreliable. 
 
-Issues spotted:
+Preliminary issues spotted:
 1. Erroneous dates e.g. 10/04/2063 and 32/05/2023
 2. Similar to #1 there are some return dates listed as prior to checkout dates
 3. Formatting issues such as dates being surrounded by excess speechmarks
@@ -24,3 +24,7 @@ User Stories or Backlog:
 
 
 Solutions Diagram:
+![Solutions Diagram](Images/Solutions%20Diagram.drawio.png)
+
+Dashboard Screenshot:
+![Dashboard Screenshot](Images/Dashboard.png)
